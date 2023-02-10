@@ -51,6 +51,13 @@ nav .icon {
   overflow: scroll;
 }
 
+.img-preview img {
+  margin: 1.5rem 0;
+  max-width: 55%;
+  max-height: 55%;
+  border-radius: 10px;
+}
+
 /* Ticket Card */
 .ticket-card {
   display: flex;
@@ -193,4 +200,13 @@ nav .icon {
 
 .ticket form .multiple-input-container {
   margin: 20px 0;
+}
+
+.ticket form .submit-btn {
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 10px;
+  border: 1.5px solid rgb(218, 218, 218);
+  margin: 5px;
+  cursor: pointer;
 }

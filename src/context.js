@@ -31,7 +31,7 @@ export const TicketsProvider = ({ children }) => {
       setTickets(tickets)
     }
     res()
-  }, [tickets])
+  }, [])
 
   return (
     <TicketsContext.Provider value={{ tickets, setTickets }}>

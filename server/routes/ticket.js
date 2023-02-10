@@ -1,6 +1,7 @@
 import express from 'express'
 import {
   deleteTicket,
+  editTicket,
   getTicket,
   getTickets,
   postTickets,
@@ -10,7 +11,8 @@ const router = express.Router()
 
 router.post('/', postTickets)
 router.get('/', getTickets)
-router.get('/', getTicket)
+router.get('/:id', getTicket)
+router.put('/:id', editTicket)
 router.delete('/:id', deleteTicket)
 
 export default router

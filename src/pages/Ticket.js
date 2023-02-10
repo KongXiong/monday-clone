@@ -1,23 +1,40 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { useCategories, useTickets } from '../context.js'
+import { getTicket } from '../services/tickets.js'
 
-const Ticket = () => {
+const Ticket = ({ editMode = false }) => {
+  const { tickets, setTickets } = useTickets()
+  const { id } = useParams()
+  const { categories, setCategories } = useCategories()
   const [form, setForm] = useState({
+    title: '',
+    description: '',
     status: 'not started',
+    priority: 0,
     progress: 0,
+    category: '',
+    owner: '',
+    avatar: '',
     timestamp: new Date().toISOString(),
   })
-  const { tickets } = useTickets()
-  const { categories, setCategories } = useCategories()
-  const navigate = useNavigate()
 
-  const editMode = false
+  const navigate = useNavigate()
 
   useEffect(() => {
     setCategories([...new Set(tickets?.map(({ category }) => category))])
   }, [tickets])
+
+  useEffect(() => {
+    if (editMode) {
+      const res = async () => {
+        const ticketData = await getTicket(id)
+        setForm(ticketData)
+      }
+      res()
+    }
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -28,7 +45,26 @@ const Ticket = () => {
           form,
         })
         .then((response) => {
+          if (response.status === 200) {
+            setTickets([...tickets, response.data])
+            navigate('/')
+          }
+        })
+        .catch((error) => {
+          console.log('Error creating ticket!', error)
+          return Promise.reject(error)
+        })
+    } else {
+      await axios
+        .put(`http://localhost:8000/tickets/${id}`, {
+          form,
+        })
+        .then((response) => {
           if (response.status === 200) navigate('/')
+        })
+        .catch((error) => {
+          console.log('Error editing ticket!', error)
+          return Promise.reject(error)
         })
     }
   }
@@ -82,10 +118,10 @@ const Ticket = () => {
             <label htmlFor="new-category">New Category</label>
             <input
               id="new-category"
-              name="category"
+              name="new-category"
               type="text"
               onChange={handleChange}
-              value={form.category}
+              value=""
             />
             <label>Priority</label>
             <div className="multiple-input-container">
@@ -118,34 +154,24 @@ const Ticket = () => {
                 />
                 <label htmlFor="progress">Progress</label>
 
-                <status>Status</status>
+                <label>Status</label>
                 <select
                   name="status"
                   value={form.status}
                   onChange={handleChange}
+                  selected={form.data}
                 >
-                  <option selected={form.data === 'done'} value="done">
-                    Done
-                  </option>
-                  <option
-                    selected={form.data === 'working on it'}
-                    value="working on it"
-                  >
-                    Working on it
-                  </option>
-                  <option selected={form.data === 'stuck'} value="stuck">
-                    Stuck
-                  </option>
-                  <option
-                    selected={form.data === 'not started'}
-                    value="not started"
-                  >
-                    Not started
-                  </option>
+                  <option value="">{''}</option>
+                  <option value="done">Done</option>
+                  <option value="working on it">Working on it</option>
+                  <option value="stuck">Stuck</option>
+                  <option value="not started">Not started</option>
                 </select>
               </>
             )}
-            <input type="submit" />
+            <button type="submit" className="submit-btn">
+              submit
+            </button>
           </section>
           <section>
             <label htmlFor="owner">Owner</label>

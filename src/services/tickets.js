@@ -7,7 +7,20 @@ export const getTickets = async () => {
       return response.data
     })
     .catch(function (error) {
-      console.log('Show error notification!')
+      console.log('Error getting Tickets!')
+      return Promise.reject(error)
+    })
+  return ticket
+}
+
+export const getTicket = async (id) => {
+  const ticket = await axios
+    .get(`http://localhost:8000/tickets/${id}`)
+    .then((response) => {
+      return response.data
+    })
+    .catch(function (error) {
+      console.log(`Error getting ticket! ${id}`)
       return Promise.reject(error)
     })
   return ticket
@@ -19,8 +32,8 @@ export const deleteTicket = async (id) => {
     .then((response) => {
       return response
     })
-    .catch(function (error) {
-      console.log('Show error notification!')
+    .catch((error) => {
+      console.log(`Error deleting ticket! ${id}`)
       return Promise.reject(error)
     })
   return response
